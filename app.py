@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 from database import create_table, add_cliente, view_all_clientes, get_cliente_by_id, edit_cliente, delete_cliente
-
-# definições
+from st_aggrid import AgGrid
 
 # setar a página par modo wide
 def wide_space_default():
@@ -14,12 +13,13 @@ wide_space_default()
 
 
 def main():
-    # st.title('Escritório de Advocacia - Dra. vanessa Streck')
-    # st.write('Av. Pereira Rego, 1100, sala 09 - Centro - Candelária - RS')
-    st.markdown("<h1 style='text-align: center; color: red;'>Escritório de Advocacia - Dra. vanessa Streck</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: white;'>Av. Pereira Rego, 1100, sala 09 - Centro - Candelária - RS - Telefone/WhatsApp (51) 9999 9999</p><br>", unsafe_allow_html=True)
+    
+    # st.markdown("<h1 style='text-align: center; color: red;'>Escritório de Advocacia - Dra. Vanessa Streck</h1>", unsafe_allow_html=True)
+    # st.markdown("<p style='text-align: center; color: white;'>Av. Pereira Rego, 1100, sala 09 - Centro - Candelária - RS - Telefone/WhatsApp (51) 9999 9999</p><br>", unsafe_allow_html=True)
+
+
     menu = ['Cadastrar', 'Consultar', 'Editar', 'Excluir']
-    choice = st.sidebar.selectbox('Registro de Clientes', menu)
+    choice = st.sidebar.selectbox('Escritório de Advocacia - Dra. Vanessa Streck', menu)
 
     create_table()
 
@@ -36,18 +36,12 @@ def main():
             st.success(f'Cliente {nome} cadastrado com sucesso!')
 
     elif choice == 'Consultar':
-       
         st.subheader('Lista de Clientes')
         clientes = view_all_clientes()
         if clientes:
-            df = pd.DataFrame(clientes, columns=[
-                              'ID', 'Nome', 'Telefone', 'E-mail', 'Endereço'])
-            # Converte o DataFrame para HTML sem a coluna de índice
-            html_table = df.to_html(index=False)
-
-            # Exibe o DataFrame formatado em HTML
-            st.markdown(html_table, unsafe_allow_html=True)
-
+            df = pd.DataFrame (clientes, columns=['ID', 'Nome', 'Telefone', 'E-mail', 'Endereço'])      
+            AgGrid(df, editable=True,key='grid5')
+       
         else:
             st.info('Nenhum cliente cadastrado.')
 
@@ -56,13 +50,8 @@ def main():
         clientes = view_all_clientes()
         if clientes:
             df = pd.DataFrame(clientes, columns=[
-                              'ID', 'Nome', 'Telefone', 'E-mail', 'Endereço'])
-                              
-            # Converte o DataFrame para HTML sem a coluna de índice
-            html_table = df.to_html(index=False)
-
-            # Exibe o DataFrame formatado em HTML
-            st.markdown(html_table, unsafe_allow_html=True)
+                                'ID', 'Nome', 'Telefone', 'E-mail', 'Endereço'])
+            AgGrid(df)
 
             cliente_id = st.number_input(
                 'ID do Cliente para editar', min_value=1, step=1)
@@ -88,11 +77,7 @@ def main():
         if clientes:
             df = pd.DataFrame(clientes, columns=[
                               'ID', 'Nome', 'Telefone', 'E-mail', 'Endereço'])
-            # Converte o DataFrame para HTML sem a coluna de índice
-            html_table = df.to_html(index=False)
-
-            # Exibe o DataFrame formatado em HTML
-            st.markdown(html_table, unsafe_allow_html=True)
+            AgGrid(df)
 
             cliente_id = st.number_input(
                 'ID do Cliente para excluir', min_value=1, step=1)
